@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+
 
 interface AIResponse {
     suggestion: string;
