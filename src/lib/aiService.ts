@@ -34,7 +34,7 @@ export const aiService = {
     },
 
     // Rewrite text based on tone
-    rewriteText: async (text: string, tone: number): Promise<string> => {
+    rewriteText: async (_text: string, tone: number): Promise<string> => {
         // tone: -1 (Friendly) to 1 (Assertive)
         return new Promise((resolve) => {
             setTimeout(() => {

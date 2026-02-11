@@ -1,4 +1,4 @@
-import { ComponentIcon } from 'lucide-react'; // Placeholder icon if needed
+
 
 interface TypewriterModeToggleProps {
     isActive: boolean;

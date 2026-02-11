@@ -7,7 +7,7 @@ export function ThemeToggle() {
     // Initialize theme from local storage or default to dark
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
 
         if (savedTheme === 'day') {
             setIsDark(false);

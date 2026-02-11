@@ -38,6 +38,7 @@ export function EditorCanvas({ content, onChange }: EditorCanvasProps) {
                     <textarea
                         ref={editorRef}
                         value={content}
+                        onChange={(e) => onChange(e.target.value)}
                         onFocus={() => setIsFocused(true)}
                         onBlur={() => setIsFocused(false)}
                         className="w-full h-full bg-transparent border-none outline-none resize-none
