@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Merriweather", "serif";
+
+  --color-dawn-50: #fdfbf7;
+  --color-dawn-100: #f7f3e8;
+  --color-dawn-200: #efe5d1;
+  --color-dawn-300: #e3d2b0;
+  --color-dawn-400: #d4b888;
+  --color-dawn-500: #c49d66;
+
+  --color-dusk-50: #f4f4f5;
+  --color-dusk-100: #e4e4e7;
+  --color-dusk-800: #27272a;
+  --color-dusk-900: #18181b;
+  --color-dusk-950: #09090b;
+
+  --animate-fade-in: fade-in 0.6s ease-out forwards;
+}
+
+@layer base {
+  body {
+    @apply antialiased text-dusk-900 bg-dawn-50 font-serif leading-relaxed transition-colors duration-500;
+  }
+
+  /* Custom selection color */
+  ::selection {
+    @apply bg-dawn-200 text-dusk-900;
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
