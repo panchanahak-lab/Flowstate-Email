@@ -1,36 +1,64 @@
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Merriweather", "serif";
+  --font-serif: "Merriweather", "ui-serif", "Georgia", "Cambria", "Times New Roman", "Times", "serif";
+  --font-sans: "Inter", "ui-sans-serif", "system-ui", "sans-serif";
 
-  --color-dawn-50: #fdfbf7;
-  --color-dawn-100: #f7f3e8;
-  --color-dawn-200: #efe5d1;
-  --color-dawn-300: #e3d2b0;
-  --color-dawn-400: #d4b888;
-  --color-dawn-500: #c49d66;
-
-  --color-dusk-50: #f4f4f5;
-  --color-dusk-100: #e4e4e7;
-  --color-dusk-800: #27272a;
-  --color-dusk-900: #18181b;
-  --color-dusk-950: #09090b;
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-accent: var(--accent);
+  --color-text-main: var(--text-main);
 
   --animate-fade-in: fade-in 0.6s ease-out forwards;
+  --animate-slide-in: slide-in 0.3s ease-out forwards;
+}
+
+:root {
+  /* Night Mode (Default) */
+  --background: #050A14;
+  --surface: #0B1220;
+  --accent: #2563EB;
+  --text-main: #E2E8F0;
+
+  color-scheme: dark;
+}
+
+:root.day {
+  /* Day Mode */
+  --background: #F8FAFC;
+  --surface: #FFFFFF;
+  --accent: #2563EB;
+  --text-main: #0F172A;
+
+  color-scheme: light;
 }
 
 @layer base {
   body {
-    @apply antialiased text-dusk-900 bg-dawn-50 font-serif leading-relaxed transition-colors duration-500;
-  }
-
-  /* Custom selection color */
-  ::selection {
-    @apply bg-dawn-200 text-dusk-900;
+    @apply antialiased bg-background text-text-main font-serif selection:bg-accent/30 selection:text-white transition-colors duration-500;
   }
 }
 
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
