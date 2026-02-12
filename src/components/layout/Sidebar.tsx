@@ -1,20 +1,18 @@
 import { useState } from 'react';
-import { PenSquare, Inbox, FileText, Send, Archive, Settings, User } from 'lucide-react';
+import { PenSquare, FileText, Settings, User } from 'lucide-react';
 
-{ id: 'drafts', icon: FileText, label: 'Drafts' },
+const VIEW_ITEMS = [
+    { id: 'drafts', icon: FileText, label: 'Drafts' },
+];
 
-interface SidebarProps {
-    onCompose: () => void;
-}
-
-export function Sidebar({ onCompose }: SidebarProps) {
+export function Sidebar({ handleCompose }: { handleCompose: () => void }) {
     const [activeId, setActiveId] = useState('drafts');
 
     return (
         <aside className="w-64 h-screen bg-background border-r border-white/5 flex flex-col pt-6 pb-4">
             <div className="px-6 mb-8">
                 <button
-                    onClick={onCompose}
+                    onClick={handleCompose}
                     className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent/90 text-white py-3 rounded-lg transition-all duration-300 shadow-[0_0_15px_-3px_var(--color-accent)] hover:shadow-[0_0_20px_-3px_var(--color-accent)]"
                 >
                     <PenSquare size={18} />

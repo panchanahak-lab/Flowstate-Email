@@ -69,7 +69,7 @@ function App() {
   }, []);
 
   return (
-    <AppLayout>
+    <AppLayout handleCompose={() => setIsDrafting(false)}>
       <ThemeToggle />
 
       {/* Main Content Area */}
