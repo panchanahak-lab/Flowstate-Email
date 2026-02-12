@@ -10,14 +10,25 @@ import { AISidebar } from './components/ai/AISidebar';
 import { ThemeToggle } from './components/ui/ThemeToggle';
 import { AnimatePresence, motion } from 'framer-motion';
 
+import { PromptInput } from './components/email/PromptInput'; // Import
+import { aiService } from './lib/aiService'; // Import aiService
+
 function App() {
   const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(false);
   const [isTypewriterMode, setIsTypewriterMode] = useState(false);
   const [showAmbient, setShowAmbient] = useState(false);
 
   // Editor State
+  const [isDrafting, setIsDrafting] = useState(false); // New State
   const [content, setContent] = useState('');
   const [sendState, setSendState] = useState<'idle' | 'sending' | 'sent'>('idle');
+
+  const handleGenerate = async (prompt: string) => {
+    // In a real app, show loading state here
+    const draft = await aiService.generateDraft(prompt);
+    setContent(draft);
+    setIsDrafting(true);
+  };
 
   const handleSend = () => {
     setSendState('sending');
@@ -30,6 +41,7 @@ function App() {
       // Reset to idle after success message
       setTimeout(() => {
         setSendState('idle');
+        setIsDrafting(false); // Go back to Prompt
       }, 3000);
     }, 2000);
   };
@@ -73,6 +85,8 @@ function App() {
             <p className="text-2xl font-serif text-accent">Your message is on its way.</p>
             <p className="text-gray-500 font-mono text-sm">Well said.</p>
           </motion.div>
+        ) : !isDrafting ? (
+          <PromptInput key="prompt-input" onGenerate={handleGenerate} />
         ) : (
           <motion.div
             key="editor"
@@ -107,6 +121,7 @@ function App() {
 
             {/* Footer / Send Area */}
             <div className="flex-none p-8 flex justify-end">
+              {/* Back to Prompt (Optional, maybe implied by 'Cancel' or sidebar) */}
               <SendButton onSend={handleSend} />
             </div>
           </motion.div>

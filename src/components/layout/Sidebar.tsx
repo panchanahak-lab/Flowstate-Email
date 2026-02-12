@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { PenSquare, Inbox, FileText, Send, Archive, Settings, User } from 'lucide-react';
 
-const VIEW_ITEMS = [
-    { id: 'inbox', icon: Inbox, label: 'Inbox' },
-    { id: 'drafts', icon: FileText, label: 'Drafts' },
-    { id: 'sent', icon: Send, label: 'Sent' },
-    { id: 'archive', icon: Archive, label: 'Archive' },
-];
+{ id: 'drafts', icon: FileText, label: 'Drafts' },
 
-export function Sidebar() {
+interface SidebarProps {
+    onCompose: () => void;
+}
+
+export function Sidebar({ onCompose }: SidebarProps) {
     const [activeId, setActiveId] = useState('drafts');
 
     return (
         <aside className="w-64 h-screen bg-background border-r border-white/5 flex flex-col pt-6 pb-4">
             <div className="px-6 mb-8">
                 <button
+                    onClick={onCompose}
                     className="w-full flex items-center justify-center gap-2 bg-accent hover:bg-accent/90 text-white py-3 rounded-lg transition-all duration-300 shadow-[0_0_15px_-3px_var(--color-accent)] hover:shadow-[0_0_20px_-3px_var(--color-accent)]"
                 >
                     <PenSquare size={18} />
@@ -32,8 +32,8 @@ export function Sidebar() {
                             key={item.id}
                             onClick={() => setActiveId(item.id)}
                             className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-md transition-all duration-200 group ${isActive
-                                    ? 'bg-surface text-accent shadow-sm'
-                                    : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
+                                ? 'bg-surface text-accent shadow-sm'
+                                : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
                                 }`}
                         >
                             <Icon

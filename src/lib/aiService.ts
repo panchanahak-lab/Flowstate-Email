@@ -33,7 +33,6 @@ export const aiService = {
         });
     },
 
-    // Rewrite text based on tone
     rewriteText: async (_text: string, tone: number): Promise<string> => {
         // tone: -1 (Friendly) to 1 (Assertive)
         return new Promise((resolve) => {
@@ -42,6 +41,15 @@ export const aiService = {
                 if (tone > 0.3) return resolve("Please review the attached immediately. I expect feedback by EOD. Regards.");
                 resolve("I am writing to share an update regarding the project. Please let me know your thoughts.");
             }, MOCK_DELAY);
+        });
+    },
+
+    // New: Generate Draft from Prompt
+    generateDraft: async (prompt: string): Promise<string> => {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(`Subject: Regarding ${prompt}\n\nHi there,\n\nI'm writing to you about ${prompt}. \n\nLooking forward to hearing from you.\n\nBest,\n[Your Name]`);
+            }, MOCK_DELAY * 2);
         });
     }
 };
