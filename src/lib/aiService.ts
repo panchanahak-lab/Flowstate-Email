@@ -44,11 +44,25 @@ export const aiService = {
         });
     },
 
-    // New: Generate Draft from Prompt
-    generateDraft: async (prompt: string): Promise<string> => {
+    // New: Generate Draft Variants from Prompt
+    generateDraft: async (prompt: string, options?: { subject?: string; tone?: string; priority?: string }): Promise<string[]> => {
+        const { subject = '', tone = 'Professional', priority = 'Normal' } = options || {};
+
         return new Promise((resolve) => {
             setTimeout(() => {
-                resolve(`Subject: Regarding ${prompt}\n\nHi there,\n\nI'm writing to you about ${prompt}. \n\nLooking forward to hearing from you.\n\nBest,\n[Your Name]`);
+                const variants = [
+                    // Variant 1: Direct & Concise
+                    `Subject: ${subject || `Regarding ${prompt}`}\n\nHi,\n\nI'm writing to briefly discuss ${prompt}.\n\nPlease let me know if you have a moment to chat.\n\nBest,\n[Your Name]`,
+
+                    // Variant 2: Detailed & Formal
+                    `Subject: ${subject || `Inquiry: ${prompt}`}\n\nDear [Recipient],\n\nI hope this email finds you well.\n\nI am writing to formally address ${prompt}. Given the ${priority.toLowerCase()} priority of this matter, I would appreciate your attention to the details provided below.\n\n[Detailed expansion on ${prompt}]\n\nThank you for your time and consideration.\n\nSincerely,\n[Your Name]`,
+
+                    // Variant 3: Friendly & Casual
+                    `Subject: ${subject || `Quick question about ${prompt}`}\n\nHey there,\n\nJust wanted to reach out regarding ${prompt}! \n\nLet me know what you think when you get a chance.\n\nCheers,\n[Your Name]`
+                ];
+
+                // Shuffle or select based on tone if we had real AI, for now return all 3
+                resolve(variants);
             }, MOCK_DELAY * 2);
         });
     }

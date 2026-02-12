@@ -8,40 +8,55 @@ import { TypewriterModeToggle } from './components/email/TypewriterModeToggle';
 import { AmbientIndicator } from './components/ai/AmbientIndicator';
 import { AISidebar } from './components/ai/AISidebar';
 import { ThemeToggle } from './components/ui/ThemeToggle';
+import { SuccessOverlay } from './components/ui/SuccessOverlay';
+import { PromptInput } from './components/email/PromptInput';
+import { VariantSelector } from './components/email/VariantSelector';
+import { aiService } from './lib/aiService';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { PromptInput } from './components/email/PromptInput'; // Import
-import { aiService } from './lib/aiService'; // Import aiService
-
 function App() {
-  const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(false);
-  const [isTypewriterMode, setIsTypewriterMode] = useState(false);
-  const [showAmbient, setShowAmbient] = useState(false);
+  const [view, setView] = useState<'prompt' | 'selecting' | 'drafting'>('prompt');
 
-  // Editor State
-  const [isDrafting, setIsDrafting] = useState(false); // New State
+  // Editor & UI State
   const [content, setContent] = useState('');
+  const [isTypewriterMode, setIsTypewriterMode] = useState(false);
+  const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(false);
+  const [showAmbient, setShowAmbient] = useState(false);
   const [sendState, setSendState] = useState<'idle' | 'sending' | 'sent'>('idle');
+  const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleGenerate = async (prompt: string) => {
-    // In a real app, show loading state here
-    const draft = await aiService.generateDraft(prompt);
-    setContent(draft);
-    setIsDrafting(true);
+  // Generator State
+  const [variants, setVariants] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleGenerate = async (prompt: string, options: { subject?: string; tone?: string; priority?: string }) => {
+    setLoading(true);
+    // Simulate AI delay and generation
+    const generatedVariants = await aiService.generateDraft(prompt, options);
+    setVariants(generatedVariants);
+    setLoading(false);
+    setView('selecting');
+  };
+
+  const handleSelectVariant = (selectedContent: string) => {
+    setContent(selectedContent);
+    setView('drafting');
   };
 
   const handleSend = () => {
     setSendState('sending');
+    setShowSuccess(true);
 
     // Ritual Sequence
     setTimeout(() => {
       setSendState('sent');
-      setContent(''); // Reset
 
-      // Reset to idle after success message
+      // Reset after animation
       setTimeout(() => {
         setSendState('idle');
-        setIsDrafting(false); // Go back to Prompt
+        setShowSuccess(false);
+        setContent('');
+        setView('prompt');
       }, 3000);
     }, 2000);
   };
@@ -68,26 +83,60 @@ function App() {
     };
   }, []);
 
+  // Prevent accidental back navigation
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      event.preventDefault();
+      if (view !== 'prompt') {
+        setView('prompt');
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [view]);
+
   return (
-    <AppLayout handleCompose={() => setIsDrafting(false)}>
+    <AppLayout handleCompose={() => setView('prompt')}>
       <ThemeToggle />
 
       {/* Main Content Area */}
-      <AnimatePresence mode='wait'>
-        {sendState === 'sent' ? (
+      <AnimatePresence mode="wait">
+        {view === 'prompt' && (
           <motion.div
-            key="confirmation"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+            key="prompt"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col items-center justify-center text-center space-y-4"
+            className="flex-1 flex flex-col items-center justify-center relative p-6 h-full"
           >
-            <p className="text-2xl font-serif text-accent">Your message is on its way.</p>
-            <p className="text-gray-500 font-mono text-sm">Well said.</p>
+            {loading ? (
+              <div className="flex flex-col items-center space-y-4">
+                <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin" />
+                <p className="text-gray-400 animate-pulse">Crafting your drafts...</p>
+              </div>
+            ) : (
+              <PromptInput onGenerate={handleGenerate} />
+            )}
           </motion.div>
-        ) : !isDrafting ? (
-          <PromptInput key="prompt-input" onGenerate={handleGenerate} />
-        ) : (
+        )}
+
+        {view === 'selecting' && (
+          <motion.div
+            key="selecting"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex-1 relative h-full flex flex-col"
+          >
+            <VariantSelector
+              variants={variants}
+              onSelect={handleSelectVariant}
+              onBack={() => setView('prompt')}
+            />
+          </motion.div>
+        )}
+
+        {view === 'drafting' && (
           <motion.div
             key="editor"
             initial={{ opacity: 0 }}
@@ -121,14 +170,17 @@ function App() {
 
             {/* Footer / Send Area */}
             <div className="flex-none p-8 flex justify-end">
-              {/* Back to Prompt (Optional, maybe implied by 'Cancel' or sidebar) */}
               <SendButton onSend={handleSend} />
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* AI Components */}
+      {/* Success Overlay */}
+      <AnimatePresence>
+        {showSuccess && <SuccessOverlay />}
+      </AnimatePresence>
+
       <AmbientIndicator
         isVisible={showAmbient && !isAiSidebarOpen && sendState === 'idle'}
         onClick={() => setIsAiSidebarOpen(true)}
